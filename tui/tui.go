@@ -12,31 +12,33 @@ import (
 )
 
 type model struct {
-	width  uint8
-	height uint8
+	width    int
+	height   int
+	isPaused bool
+	speed    int
 }
 
 var newDirection types.Direction = types.NoDirection
 var lastGameState types.GameEvent = types.GameContinue
-var isPaused bool = false
 var timeSinceUpdate time.Time
 
-func Init() {
+func Init(speed int) {
 	timeSinceUpdate = time.Now()
 
-	p := tea.NewProgram(initialModel())
+	dimensions := game.GetConf().Dimensions
+	m := model{
+		width:    dimensions.X,
+		height:   dimensions.Y,
+		isPaused: false,
+		speed:    speed,
+	}
+
+	p := tea.NewProgram(m)
 	if _, err := p.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
 		os.Exit(1)
 	}
 
-}
-
-func initialModel() model {
-	return model{
-		width:  16,
-		height: 16,
-	}
 }
 
 func (m model) Init() tea.Cmd {
@@ -53,7 +55,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			// Pause on p or esc
 		case "p", "esc":
-			isPaused = !isPaused
+			m.isPaused = !m.isPaused
 
 		// Move up
 		case "up", "k", "w":
@@ -73,7 +75,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	}
 
-	if !isPaused && time.Since(timeSinceUpdate) >= 100*time.Millisecond {
+	if !m.isPaused && time.Since(timeSinceUpdate) >= time.Duration(m.speed)*time.Millisecond {
 		timeSinceUpdate = time.Now()
 		lastGameState = game.Update(newDirection)
 		newDirection = types.NoDirection
@@ -91,20 +93,19 @@ func (m model) View() string {
 	}
 
 	pausedSign := "󰐊"
-	if isPaused {
+	if m.isPaused {
 		pausedSign = "󰏤"
 	}
 
 	score := game.GetScore()
-	dimensions := game.GetConf().Dimensions
 
-	s := "╔" + strings.Repeat("═", dimensions.X*2) + "╗\n"
-	s += fmt.Sprintf("║ : %d%s %s ║\n", score, strings.Repeat(" ", dimensions.X*2-7-NumLen(score)), pausedSign)
-	s += "╠" + strings.Repeat("═", dimensions.X*2) + "╣\n"
+	s := "╔" + strings.Repeat("═", m.width*2) + "╗\n"
+	s += fmt.Sprintf("║ : %d%s %s ║\n", score, strings.Repeat(" ", m.width*2-7-NumLen(score)), pausedSign)
+	s += "╠" + strings.Repeat("═", m.width*2) + "╣\n"
 
-	for y := 0; y < dimensions.Y; y++ {
+	for y := 0; y < m.height; y++ {
 		s += "║"
-		for x := 0; x < dimensions.X; x++ {
+		for x := 0; x < m.height; x++ {
 			pos := types.NewVec2(x, y)
 			if game.GetSnake().GetHead().IsEqual(pos) {
 				s += "##"
@@ -119,7 +120,7 @@ func (m model) View() string {
 		s += "║\n"
 	}
 
-	s += "╚" + strings.Repeat("═", dimensions.X*2) + "╝\n"
+	s += "╚" + strings.Repeat("═", m.width*2) + "╝\n"
 	return s
 }
 

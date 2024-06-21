@@ -10,7 +10,8 @@ import (
 
 func main() {
 	cliArgs := cli.ParseArgs(os.Args)
+	cli.CheckArgs(*cliArgs)
 
 	game.Init(cliArgs.Width, cliArgs.Height, cliArgs.Loop)
-	tui.Init()
+	tui.Init(cliArgs.Speed)
 }
