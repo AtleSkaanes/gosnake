@@ -90,35 +90,36 @@ func (m model) View() string {
 		return "╔═════════╗\n║ LOADING ║\n╚═════════╝"
 	}
 
+	pausedSign := "󰐊"
 	if isPaused {
-		return "╔════════╗\n║ PAUSED ║\n╚════════╝"
+		pausedSign = "󰏤"
 	}
 
 	score := game.GetScore()
 	dimensions := game.GetConf().Dimensions
 
-	s := "╔" + strings.Repeat("═", dimensions.X) + "╗\n"
-	s += fmt.Sprintf("║ : %d%s ║\n", score, strings.Repeat(" ", dimensions.X-5-NumLen(score)))
-	s += "╠" + strings.Repeat("═", dimensions.X) + "╣\n"
+	s := "╔" + strings.Repeat("═", dimensions.X*2) + "╗\n"
+	s += fmt.Sprintf("║ : %d%s %s ║\n", score, strings.Repeat(" ", dimensions.X*2-7-NumLen(score)), pausedSign)
+	s += "╠" + strings.Repeat("═", dimensions.X*2) + "╣\n"
 
 	for y := 0; y < dimensions.Y; y++ {
 		s += "║"
 		for x := 0; x < dimensions.X; x++ {
 			pos := types.NewVec2(x, y)
 			if game.GetSnake().GetHead().IsEqual(pos) {
-				s += "#"
+				s += "##"
 			} else if game.GetSnake().IsOnBody(pos) {
-				s += "█"
+				s += "██"
 			} else if game.GetApple().IsEqual(pos) {
-				s += ""
+				s += ""
 			} else {
-				s += " "
+				s += "  "
 			}
 		}
 		s += "║\n"
 	}
 
-	s += "╚" + strings.Repeat("═", dimensions.X) + "╝\n"
+	s += "╚" + strings.Repeat("═", dimensions.X*2) + "╝\n"
 	return s
 }
 
