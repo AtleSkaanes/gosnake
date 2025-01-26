@@ -14,4 +14,8 @@ func main() {
 
 	game.Init(cliArgs.Width, cliArgs.Height, cliArgs.Loop)
 	tui.Init(cliArgs.Speed)
+
+	if cliArgs.ExitCode {
+		os.Exit(game.GetScore())
+	}
 }

@@ -8,18 +8,19 @@ import (
 )
 
 type CliArgs struct {
-	Width   uint8 `clap:"--width"`
-	Height  uint8 `clap:"--height"`
-	Loop    bool  `clap:"--loop"`
-	Speed   int   `clap:"--speed,-s"`
-	Help    bool  `clap:"--help,-h"`
-	Version bool  `clap:"--version,-v"`
+	Width    uint8 `clap:"--width"`
+	Height   uint8 `clap:"--height"`
+	Loop     bool  `clap:"--loop"`
+	Speed    int   `clap:"--speed,-s"`
+	Help     bool  `clap:"--help,-h"`
+	Version  bool  `clap:"--version,-v"`
+	ExitCode bool  `clap:"--exit-with-code,-e"`
 }
 
 func ParseArgs(args []string) *CliArgs {
 	var err error
 
-	cliArgs := &CliArgs{Width: 16, Height: 16, Speed: 100, Loop: true, Help: false, Version: false}
+	cliArgs := &CliArgs{Width: 16, Height: 16, Speed: 100, Loop: true, Help: false, Version: false, ExitCode: false}
 	if _, err = clap.Parse(args, cliArgs); err != nil {
 		os.Exit(1)
 	}
@@ -56,13 +57,14 @@ func PrintHelp() {
 	fmt.Println("A snake game for the terminal, made in Go (By someone who doesn't know Go)")
 
 	fmt.Println("\n  Options:")
-	fmt.Println("    --width <int>    Sets the window width. 16 by default")
-	fmt.Println("    --height <int>   Sets the window height. 16 by default")
-	fmt.Println("    --loop           Enables the snake to loop around. Enabled by default")
-	fmt.Println("    --no-loop        Disables the snakes ability to loop around")
-	fmt.Println("    -s, --speed      Sets the time between frames, in ms. 100ms by default")
-	fmt.Println("    -h, --help       Prints this help page")
-	fmt.Println("    -v, --version    Prints the version number")
+	fmt.Println("    --width <int>          Sets the window width. 16 by default")
+	fmt.Println("    --height <int>         Sets the window height. 16 by default")
+	fmt.Println("    --loop                 Enables the snake to loop around. Enabled by default")
+	fmt.Println("    --no-loop              Disables the snakes ability to loop around")
+	fmt.Println("    -s, --speed            Sets the time between frames, in ms. 100ms by default")
+	fmt.Println("    -e, --exit-with-code   Exits the program with the score as the exitcode")
+	fmt.Println("    -h, --help             Prints this help page")
+	fmt.Println("    -v, --version          Prints the version number")
 }
 
 func PrintVersion() {
