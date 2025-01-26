@@ -105,7 +105,7 @@ func (m model) View() string {
 
 	for y := 0; y < m.height; y++ {
 		s += "║"
-		for x := 0; x < m.height; x++ {
+		for x := 0; x < m.width; x++ {
 			pos := types.NewVec2(x, y)
 			if game.GetSnake().GetHead().IsEqual(pos) {
 				s += "##"
