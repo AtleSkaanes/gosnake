@@ -11,6 +11,7 @@ type CliArgs struct {
 	Width    uint8 `clap:"--width"`
 	Height   uint8 `clap:"--height"`
 	Loop     bool  `clap:"--loop"`
+	Color    bool  `clap:"--color,-c"`
 	Speed    int   `clap:"--speed,-s"`
 	Help     bool  `clap:"--help,-h"`
 	Version  bool  `clap:"--version,-v"`
@@ -20,7 +21,7 @@ type CliArgs struct {
 func ParseArgs(args []string) *CliArgs {
 	var err error
 
-	cliArgs := &CliArgs{Width: 16, Height: 16, Speed: 100, Loop: true, Help: false, Version: false, ExitCode: false}
+	cliArgs := &CliArgs{Width: 16, Height: 16, Speed: 100, Loop: true, Color: true, Help: false, Version: false, ExitCode: false}
 	if _, err = clap.Parse(args, cliArgs); err != nil {
 		os.Exit(1)
 	}
@@ -61,6 +62,8 @@ func PrintHelp() {
 	fmt.Println("    --height <int>         Sets the window height. 16 by default")
 	fmt.Println("    --loop                 Enables the snake to loop around. Enabled by default")
 	fmt.Println("    --no-loop              Disables the snakes ability to loop around")
+	fmt.Println("    --color                Enables elements to be colored via ANSI codes. Enabled by default")
+	fmt.Println("    --no-color             Disables elements to be colored")
 	fmt.Println("    -s, --speed            Sets the time between frames, in ms. 100ms by default")
 	fmt.Println("    -e, --exit-with-code   Exits the program with the score as the exitcode")
 	fmt.Println("    -h, --help             Prints this help page")

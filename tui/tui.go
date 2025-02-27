@@ -12,25 +12,27 @@ import (
 )
 
 type model struct {
-	width    int
-	height   int
-	isPaused bool
-	speed    int
+	width     int
+	height    int
+	isPaused  bool
+	speed     int
+	isColored bool
 }
 
 var newDirection types.Direction = types.NoDirection
 var lastGameState types.GameEvent = types.GameContinue
 var timeSinceUpdate time.Time
 
-func Init(speed int) {
+func Init(speed int, withColor bool) {
 	timeSinceUpdate = time.Now()
 
 	dimensions := game.GetConf().Dimensions
 	m := model{
-		width:    dimensions.X,
-		height:   dimensions.Y,
-		isPaused: false,
-		speed:    speed,
+		width:     dimensions.X,
+		height:    dimensions.Y,
+		isPaused:  false,
+		speed:     speed,
+		isColored: withColor,
 	}
 
 	p := tea.NewProgram(m)
@@ -108,11 +110,11 @@ func (m model) View() string {
 		for x := 0; x < m.width; x++ {
 			pos := types.NewVec2(x, y)
 			if game.GetSnake().GetHead().IsEqual(pos) {
-				s += "##"
+				s += green("##", m.isColored)
 			} else if game.GetSnake().IsOnBody(pos) {
-				s += "██"
+				s += green("██", m.isColored)
 			} else if game.GetApple().IsEqual(pos) {
-				s += ""
+				s += red("", m.isColored)
 			} else {
 				s += "  "
 			}
@@ -134,4 +136,18 @@ func NumLen(i int) int {
 		count++
 	}
 	return count
+}
+
+func red(str string, color bool) string {
+	if !color {
+		return str
+	}
+	return "\x1B[31m" + str + "\x1B[0m"
+}
+
+func green(str string, color bool) string {
+	if !color {
+		return str
+	}
+	return "\x1B[32m" + str + "\x1B[0m"
 }

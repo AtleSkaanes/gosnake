@@ -13,7 +13,7 @@ func main() {
 	cli.CheckArgs(*cliArgs)
 
 	game.Init(cliArgs.Width, cliArgs.Height, cliArgs.Loop)
-	tui.Init(cliArgs.Speed)
+	tui.Init(cliArgs.Speed, cliArgs.Color)
 
 	if cliArgs.ExitCode {
 		os.Exit(game.GetScore())
